@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html>
+<head>
+<br>
+  <title>Messenger</title>
+  <style>
+    body {
+      background-color: #36393f;
+      color: #fff;
+    }
+
+    #chatbox {
+     max-width: 100%;
+     height: 67vh;
+     border: 2px solid #ccc; /* Remove the border */
+     overflow-y: scroll;
+     padding: 10px;
+     background-color: #36393f; /* Light gray background similar to WhatsApp */
+     margin-left: 4px;
+     margin-right: 4px;
+     border-radius: 20px; /* Rounded corners */
+     padding-bottom: 10px; /* Space at the bottom */
+   }
+
+    #message-input {
+      width: 100%;
+      padding: 10px;
+      background-color: #36393f; /* Light gray background similar to WhatsApp */
+      color: white; /* Dark text color */
+      resize: none;
+      overflow: hidden;
+      margin-left: 2px;
+      font-size: 16px;
+      max-height: 85px;
+      border: 2px solid #ccc;;
+      border-radius: 20px; /* Rounded corners */
+      padding-left: 15px; /* Space between border and text */
+    }
+    
+    #input-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 10px;
+      background-color: #36393f;
+      display: flex;
+      align-items: center;
+    }
+    
+    .message-container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+    }
+
+    .message-container img,
+    .message-container video {
+      margin-top: 10px; 
+      margin-left: 10px; 
+      max-width: 100%;
+      max-height: 200px;
+    }
+    
+    .sender {
+      color: white;
+      font-size: 20px;
+      margin-left: 4px;
+      margin-top: 4px;
+    }
+
+    .message {
+      color: white;
+      font-size: 19px;
+      margin-left: 5px;
+    }
+
+    .date {
+      color: gray;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+
+    .edited {
+      font-size: 12px;
+      margin-left: 4px;
+      color: gray;
+    }
+
+    .date-separator {
+      display: flex;
+      align-items: center;
+      color: gray;
+      margin: 10px 0;
+    }
+
+    .date-separator:before,
+    .date-separator:after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid gray;
+    }
+
+    .date-separator span {
+      padding: 0 10px;
+    }
+
+    .input-container input[type="text"],
+    .input-container button {
+      margin: 5px;
+    }
+
+    .edit-message {
+      font-size: 18px;
+      color: #00f7ff;
+    }
+    
+    .time {
+      font-size: 12px;
+      color: gray;
+    }
+    
+    .time-container {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      text-align: right;
+      margin-right: 10px;
+    }
+    
+    .current-time {
+      font-size: 30px;
+      color: white;
+    }
+
+    .current-date {
+      font-size: 20px;
+      color: white;
+    }
+    
+    .char-count {
+      font-size: 21px;
+      color: grey;
+      margin-left: 6px;
+    }
+    
+    .button-container button {
+      margin-right: 19px;
+    }
+    
+    .scroll-btn {
+      position: fixed;
+      bottom: 140px;
+      right: 20px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #555;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      color: white;
+      font-size: 20px;
+      right: 39px;
+      background: none;
+    }
+
+    .scroll-btn.up {
+      top: 140px;
+      bottom: auto;
+      right: 39px;
+    }
+    
+    .button-container {
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+     margin-left: 4px;
+     margin-right: 20px;
+   }
+
+   .undo-container {
+     width: 60px;
+     margin-left: -49px;
+    }
+    
+     .upload-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+    margin-left: 4px;
+    margin-right: 7px;
+   }
+   
+    .button-container button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: white;
+    margin-right: 0px;
+    margin-left: 0px;
+   } 
+   
+   body.light-theme {
+   background-color: #e6e2e1;
+   color: black;
+  }
+
+    body.light-theme #chatbox,
+    body.light-theme .message-container,
+    body.light-theme .scroll-btn,
+    body.light-theme .upload-icon,
+    body.light-theme .button-container button,
+    body.light-theme .adjust i { /* Adjusting the color for the adjust button */
+     background-color: #e6e2e1;
+     color: black;
+    }
+
+    body.light-theme #chatbox,
+    body.light-theme #message-input,
+    body.light-theme .sender,
+    body.light-theme .message,
+    body.light-theme .char-count,
+    body.light-theme .date-separator,
+    body.light-theme .current-date,
+    body.light-theme .current-time,
+    body.light-theme .time-container,
+    body.light-theme #input-container {
+      color: black;
+    }
+
+    body.light-theme #input-container {
+      background-color: #e6e2e1;
+    }
+
+    body.light-theme .current-time,
+    body.light-theme .current-date {
+      color: black;
+    }
+
+    body.light-theme #message-input {
+      border: 2px solid black;
+    }
+   
+   .image-container,
+   .video-container {
+     position: relative;
+     display: inline-block;
+     margin-top: 5px;
+    }
+
+   .image-container img,
+   .video-container video {
+     max-width: 100%;
+     max-height: 200px;
+     margin-left: 4px;
+     margin-top: 5px;
+    }
+
+   .zoom-button {
+     position: absolute;
+     bottom: 9px;
+     right: 2px;
+     background: none;
+     border: none;
+     color: white;
+     font-size: 21px;
+     cursor: pointer;
+    }
+
+   .download-button {
+     font-size: 18px;
+     position: absolute;
+     top: 15px;
+     right: 2px;
+     background: none;
+     border: none;
+     color: white;
+     font-size: 21px;
+     cursor: pointer;
+    }
+    
+   .image-container.zoomed img {
+     max-width: none;
+     max-height: none;
+     width: auto;
+     height: auto;
+     cursor: zoom-out;
+    }
+
+    </style>
+</head>
+<body>
+  <body class="dark-theme">  
+  <input type="text" id="nickname-input" placeholder="  (enter your nickname)" style="margin-left: 5px; border: 3px solid #ccc; border-radius: 20px; background: none; color: red; width: 160px; height: 30px; border-color: gray; font-size: 15px;" />
+  <br>
+  <div class="time-container">
+  <br>
+    <div class="current-time" id="current-time-text"></div>
+    <div class="current-date" id="current-date-text"></div>
+  </div>
+  <br>
+  </div>
+  <span class="char-count" id="char-count-text"></span>
+  <br>
+  <br>
+  <div id="chatbox"></div>
+  <br>
+ <div class="input-container" id="input-container">
+ 
+ <div class="adjust">
+  <button onclick="toggleTheme()" style="background: none; border: none; font-size: 25px; color: white; margin-left: -5px; margin-top: 1.5px;"><i class="fas fa-adjust"></i></button>
+</div>
+ 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<input type="file" id="file-input" style="display: none;" accept="image/*, video/*" />
+<label for="file-input" class="upload-icon"><i class="fas fa-upload"></i></label>
+
+  <textarea id="message-input" placeholder="type your message"></textarea>
+  <div class="button-container">
+    <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+<button onclick="deleteAllWords()"><i class="fas fa-trash-alt"></i></button>
+<button onclick="undoDelete()"><i class="fas fa-undo"></i></buttonn>
+  </div>
+   <div class="scroll-btn up" onclick="scrollToTop()">&#x25B2;</div>
+  <div class="scroll-btn down" onclick="scrollToBottom()">&#x25BC;</div>
+  <div id="character-limit-error" style="color: red; font-size: 19px; margin-left: 5px; display: none;">    
+  </div>
+</div>
+
+  <script>
+     var nickname = "Unknown";
+     var editMode = false;
+     var editMessageIndex = -1;
+     var lastMessageDate = null;
+     var spamCount = 0;
+     var spamMessage = null;
+
+    
+    function updateNickname() {
+      var nicknameInput = document.getElementById("nickname-input");
+      var newNickname = nicknameInput.value.trim().substring(0, 25);
+
+      if (newNickname !== "") {
+        nickname = newNickname;
+      }
+
+      nicknameInput.value = nickname;
+
+      var senderElements = document.getElementsByClassName("sender");
+      for (var i = 0; i < senderElements.length; i++) {
+        senderElements[i].textContent = nickname + ":";
+      }
+    }
+    
+    function updateDateTime() {
+      var currentTimeElement = document.getElementById("current-time-text");
+      var currentDateElement = document.getElementById("current-date-text");
+
+      var now = new Date();
+      var time = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      var date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      currentTimeElement.textContent = time;
+      currentDateElement.textContent = date;
+    }
+
+    updateDateTime();
+
+    setInterval(updateDateTime, 1000);
+
+    function getCurrentDate() {
+      var now = new Date();
+      var date = now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      return date;
+    }
+    
+     function getCurrentTime() {
+      var now = new Date();
+      var time = now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+      return time;
+    }
+    
+    function sendMessage() {
+    var messageInput = document.getElementById("message-input");
+    var message = messageInput.value.trim();
+    var chatbox = document.getElementById("chatbox");
+
+    if (editMode) {
+    
+    if (editMessageIndex !== -1) {
+      var messageDiv = chatbox.childNodes[editMessageIndex];
+      var messageSpan = messageDiv.querySelector(".message");
+      messageSpan.textContent = message;
+      var editedText = messageDiv.querySelector(".edited");
+      editedText.style.display = "inline";
+      editedText.textContent = " (edited at: " + getCurrentTime() + ")";
+      exitEditMode();
+    }   
+    
+    } else {
+      if (message !== "") {
+        if (message.length > 2000) {
+          var characterLimitError = document.getElementById("character-limit-error");
+          characterLimitError.style.display = "block";
+          return;
+        } else {
+          var characterLimitError = document.getElementById("character-limit-error");
+          characterLimitError.style.display = "none";
+        }
+
+        if (message === spamMessage) {
+          spamCount++;
+        } else {
+          spamMessage = message;
+          spamCount = 1;
+        }
+
+        if (spamCount === 2) {
+
+          var warningDiv = document.createElement("div");
+          warningDiv.textContent = "Warning: Spamming messages are not allowed.";
+          warningDiv.style.color = "red";
+          warningDiv.style.marginLeft = "5px";
+          warningDiv.style.fontSize = "19px";
+          warningDiv.style.marginTop = "5px";
+          warningDiv.style.marginBottom = "5px";
+          chatbox.appendChild(warningDiv);
+
+          setTimeout(function () {
+            chatbox.removeChild(warningDiv);
+          }, 3000);
+
+          messageInput.value = "";
+          message = "";
+          spamMessage = null;
+          spamCount = 0;
+          return; 
+        }
+
+        var messageChars = message.split("");
+
+        var newMessage = document.createElement("div");
+        var currentTime = getCurrentTime();
+        var currentDate = getCurrentDate();
+        if (currentDate !== lastMessageDate) {
+          var separator = document.createElement("div");
+          separator.classList.add("date-separator");
+          separator.innerHTML = "<span>" + currentDate + "</span>";
+          chatbox.appendChild(separator);
+          lastMessageDate = currentDate;
+        }
+
+        newMessage.innerHTML = `
+          <div class="message-container">
+            <span class="sender">${nickname}:</span>
+            <span class="message">${messageChars.join("")}</span>
+            <br>
+          </div>
+          <span class="date">${getCurrentDate()}</span>
+          <span class="time">${getCurrentTime()}</span>
+          <span class="edited" style="display: none;"></span>
+        `;
+
+        newMessage.addEventListener("click", function () {
+          enterEditMode(this);
+        });
+        chatbox.appendChild(newMessage);
+
+        messageInput.value = "";
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
+    }
+  }
+
+    function enterEditMode(messageDiv) {
+      var messageSpan = messageDiv.querySelector(".message");
+      var currentTime = getCurrentTime();
+      var message = messageSpan.textContent;
+      var messageInput = document.getElementById("message-input");
+
+      messageInput.value = message;
+      messageInput.focus();
+
+      editMode = true;
+      editMessageIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+    }
+
+    function exitEditMode() {
+      var messageInput = document.getElementById("message-input");
+
+      messageInput.value = "";
+      messageInput.focus();
+
+      editMode = false;
+      editMessageIndex = -1;
+    }
+
+
+    var messageInput = document.getElementById("message-input");
+    messageInput.addEventListener("keyup", function(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    var nicknameInput = document.getElementById("nickname-input");
+    nicknameInput.addEventListener("input", updateNickname);
+    
+    function updateCharCount() {
+      var messageInput = document.getElementById("message-input");
+      var charCountText = document.getElementById("char-count-text");
+      var message = messageInput.value.trim();
+      var remainingChars = 2000 - message.length;
+      charCountText.textContent = remainingChars + "";
+      charCountText.style.color = remainingChars < 0 ? "red" : "grey";
+      charCountText.textContent = remainingChars + " characters left";
+    }
+
+    var messageInput = document.getElementById("message-input");
+    messageInput.addEventListener("keyup", updateCharCount);
+
+    updateCharCount();
+    
+    function adjustMessageInputHeight() {
+      var messageInput = document.getElementById("message-input");
+      messageInput.style.height = "auto";
+      messageInput.style.height = messageInput.scrollHeight + "px";
+    }
+
+    var messageInput = document.getElementById("message-input");
+    messageInput.addEventListener("input", function() {
+      adjustMessageInputHeight();
+      updateCharCount();
+    });
+
+    adjustMessageInputHeight();
+    
+    function scrollToTop() {
+      var chatbox = document.getElementById("chatbox");
+      chatbox.scrollTop = 0;
+    }
+
+    function scrollToBottom() {
+      var chatbox = document.getElementById("chatbox");
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+    
+    var deletedMessage = null;
+    var deletedMessageIndex = -1;
+
+    function deleteAllWords() {
+      var messageInput = document.getElementById("message-input");
+      deletedMessage = messageInput.value; 
+      deletedMessageIndex = editMessageIndex; 
+      messageInput.value = ""; 
+      messageInput.focus(); 
+      adjustMessageInputHeight(); 
+      updateCharCount(); 
+      showUndoButton();
+    }
+    
+         function undoDelete() {
+    var messageInput = document.getElementById("message-input");
+    if (deletedMessage !== null && deletedMessage.trim() !== "") {
+      messageInput.value = deletedMessage; 
+      messageInput.focus(); 
+      adjustMessageInputHeight(); 
+      updateCharCount(); 
+      hideUndoButton();
+      deletedMessage = null; 
+      deletedMessageIndex = -1; 
+    } else {
+     
+      var warningDiv = document.createElement("div");
+      warningDiv.textContent = "Sorry, but you didn't delete anything.";
+      warningDiv.style.color = "red";
+      warningDiv.style.marginLeft = "5px";
+      warningDiv.style.fontSize = "19px";
+      warningDiv.style.marginTop = "5px";
+      warningDiv.style.marginBottom = "5px";
+      var chatbox = document.getElementById("chatbox");
+      chatbox.appendChild(warningDiv);
+
+      setTimeout(function () {
+        chatbox.removeChild(warningDiv);
+      }, 3000);
+    }
+  }
+
+    function showUndoButton() {
+      var undoContainer = document.querySelector(".undo-container");
+      undoContainer.style.display = "block";
+    }
+    
+    function triggerFileInput() {
+  var fileInput = document.getElementById("file-input");
+  fileInput.click();
+}
+
+    function handleFileUpload(files) {
+    var chatbox = document.getElementById("chatbox");
+
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+
+      reader.onload = function (event) {
+        var newMessage = document.createElement("div");
+        var currentTime = getCurrentTime();
+        var currentDate = getCurrentDate();
+        if (currentDate !== lastMessageDate) {
+          var separator = document.createElement("div");
+          separator.classList.add("date-separator");
+          separator.innerHTML = "<span>" + currentDate + "</span>";
+          chatbox.appendChild(separator);
+          lastMessageDate = currentDate;
+        }
+
+        var isImage = file.type.includes("image");
+        var isVideo = file.type.includes("video");
+        var showZoomButton = isImage || (isVideo && file.type.includes("gif"));
+
+        var messageContent = `
+          <div class="message-container">
+            <span class="sender">${nickname}:</span>
+            <br>
+          </div>
+          <span class="date">${getCurrentDate()}</span>
+          <span class="time">${getCurrentTime()}</span>
+          <span class="edited" style="display: none;"></span>
+
+          <div class="media-container">
+            ${
+              isImage
+                ? `<div class="image-container">
+                    <img src="${event.target.result}" alt="Image" />
+                    <button class="download-button" onclick="downloadFile('${event.target.result}', 'image')"><i class="fas fa-download"></i></button>
+                    ${showZoomButton ? '<button class="zoom-button" onclick="toggleZoom(this)"><i class="fas fa-search-plus"></i></button>' : ''}
+                  </div>`
+                : `<div class="video-container">
+                    <video controls>
+                      <source src="${event.target.result}" type="${file.type}">
+                    </video>
+                    <button class="download-button" onclick="downloadFile('${event.target.result}', 'video')"><i class="fas fa-download"></i></button>
+                  </div>`
+            }
+          </div>
+        `;
+
+        newMessage.innerHTML = messageContent;
+
+        chatbox.appendChild(newMessage);
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+var fileInput = document.getElementById("file-input");
+fileInput.addEventListener("change", function() {
+  handleFileUpload(this.files);
+});
+
+      var isLightTheme = false;
+
+function toggleTheme() {
+  var body = document.body;
+  var chatbox = document.getElementById("chatbox");
+  var inputContainer = document.getElementById("input-container");
+  var messageInput = document.getElementById("message-input");
+  var senderElements = document.getElementsByClassName("sender");
+  var timeElements = document.getElementsByClassName("time");
+  var charCount = document.getElementById("char-count-text");
+  var scrollButtons = document.getElementsByClassName("scroll-btn");
+  var uploadIcon = document.querySelector(".upload-icon");
+  var buttonIcons = document.querySelectorAll(".button-container button i");
+  var currentTimeElement = document.getElementById("current-time-text");
+  var currentDateElement = document.getElementById("current-date-text");
+
+  isLightTheme = !isLightTheme;
+
+  if (isLightTheme) {
+    body.classList.add("light-theme");
+  } else {
+    body.classList.remove("light-theme");
+  }
+
+  chatbox.style.borderColor = isLightTheme ? "black" : "#ccc";
+  inputContainer.style.backgroundColor = isLightTheme ? "#e6e2e1" : "#36393f";
+  messageInput.style.backgroundColor = isLightTheme ? "#e6e2e1" : "#36393f";
+  messageInput.style.color = isLightTheme ? "black" : "#e6e2e1";
+  messageInput.style.border = isLightTheme ? "2px solid black" : "2px solid #ccc";
+
+  for (var i = 0; i < senderElements.length; i++) {
+    senderElements[i].style.color = isLightTheme ? "black" : "white";
+  }
+
+  for (var i = 0; i < timeElements.length; i++) {
+    timeElements[i].style.color = isLightTheme ? "black" : "gray";
+  }
+
+  charCount.style.color = isLightTheme ? "black" : "grey";
+
+  for (var i = 0; i < scrollButtons.length; i++) {
+    scrollButtons[i].style.color = isLightTheme ? "black" : "white";
+  }
+
+  uploadIcon.style.color = isLightTheme ? "black" : "white";
+
+  for (var i = 0; i < buttonIcons.length; i++) {
+    buttonIcons[i].style.color = isLightTheme ? "black" : "white";
+  }
+
+  currentTimeElement.style.color = isLightTheme ? "black" : "white";
+  currentDateElement.style.color = isLightTheme ? "black" : "white";
+  
+  // Adjust the adjust button color here
+  var adjustButton = document.querySelector(".adjust-button");
+  adjustButton.style.color = isLightTheme ? "black" : "white";
+}
+
+
+ function downloadFile(file, type) {
+  var blob = new Blob([file], { type: type });
+  var url = URL.createObjectURL(blob);
+
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = "download." + (type.includes("image") ? "jpg" : "mp4");
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+  function toggleZoom(button) {
+    var mediaContainer = button.closest(".media-container");
+    var imageContainer = mediaContainer.querySelector(".image-container");
+    var image = imageContainer.querySelector("img");
+
+    if (imageContainer.classList.contains("zoomed")) {
+      imageContainer.classList.remove("zoomed");
+      button.innerHTML = '<i class="fas fa-search-plus"></i>';
+    } else {
+      imageContainer.classList.add("zoomed");
+      button.innerHTML = '<i class="fas fa-search-minus"></i>';
+    }
+
+    adjustImageSize(imageContainer);
+  }
+
+  function adjustImageSize(imageContainer) {
+    var image = imageContainer.querySelector("img");
+
+    if (imageContainer.classList.contains("zoomed")) {
+      image.style.maxWidth = "500px";
+      image.style.maxHeight = "500px";
+    } else {
+      image.style.maxWidth = "300px";
+      image.style.maxHeight = "300px";
+    }
+  }
+  
+</script>
+
+ <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMlEiccIxvWu5kjnozqtKJmbqqliN3nAw",
+    authDomain: "abcord-messager.firebaseapp.com",
+    projectId: "abcord-messager",
+    storageBucket: "abcord-messager.appspot.com",
+    messagingSenderId: "835025001593",
+    appId: "1:835025001593:web:ae0a2afcb5c024f36608a8",
+    measurementId: "G-8WN0VTLH1G"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+</body>
+</html>
+        
